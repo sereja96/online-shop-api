@@ -1,5 +1,7 @@
 <?php
 
+use App\Role;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -17,7 +19,7 @@ class UsersTableSeeder extends Seeder
                 'last_name' => 'Shablinski',
                 'login' => 'sereja',
                 'email' => 'webberry@bk.ru',
-                'role_id' => \App\Role::where('name', 'admin')->first()->id,
+                'role_id' => Role::where('name', Role::ADMIN)->first()->id,
                 'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
             ],
             [
@@ -25,7 +27,7 @@ class UsersTableSeeder extends Seeder
                 'last_name' => 'user 1',
                 'login' => 'test1',
                 'email' => 'test@test.ru',
-                'role_id' => \App\Role::where('name', 'user')->first()->id,
+                'role_id' => Role::where('name', Role::USER)->first()->id,
                 'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
             ],
             [
@@ -33,15 +35,14 @@ class UsersTableSeeder extends Seeder
                 'last_name' => 'user 2',
                 'login' => 'test2',
                 'email' => 'test2@test.ru',
-                'role_id' => \App\Role::where('name', 'user')->first()->id,
+                'role_id' => Role::where('name', Role::SELLER)->first()->id,
                 'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
             ]
         ];
 
         foreach ($data as $item)
         {
-            $user = new \App\User($item);
-            $user->save();
+            User::create($item);
         }
     }
 }

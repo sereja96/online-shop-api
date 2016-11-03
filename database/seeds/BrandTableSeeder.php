@@ -1,9 +1,8 @@
 <?php
 
-use App\Role;
 use Illuminate\Database\Seeder;
 
-class RoleTableSeeder extends Seeder
+class BrandTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,19 +13,19 @@ class RoleTableSeeder extends Seeder
     {
         $data = [
             [
-                'name' => Role::ADMIN
+                'name' => 'Adidas'
             ],
             [
-                'name' => Role::USER
+                'name' => 'Nike'
             ],
             [
-                'name' => Role::SELLER
+                'name' => 'Puma'
             ]
         ];
 
         foreach ($data as $value)
         {
-            Role::create($value);
+            \App\Brand::create($value);
         }
     }
 }
