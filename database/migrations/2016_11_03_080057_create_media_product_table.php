@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFollowerTable extends Migration
+class CreateMediaProductTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,11 @@ class CreateFollowerTable extends Migration
      */
     public function up()
     {
-        Schema::create('follower', function (Blueprint $table) {
+        Schema::create('media_product', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('follower_user_id')->unsigned();
+            $table->integer('product_id');
+            $table->string('link', 2000);
             $table->nullableTimestamps();
-
-            $table->foreign('follower_user_id')
-                ->references('id')
-                ->on('user');
         });
     }
 
@@ -31,6 +27,6 @@ class CreateFollowerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('follower');
+        Schema::dropIfExists('media_product');
     }
 }

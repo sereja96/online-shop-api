@@ -1,9 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -15,12 +14,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'sex',
-        'timezone',
-        'vk_id',
-        'bdate',
         'media_id',
-        'city_id',
         'login',
         'email',
         'password',
@@ -35,7 +29,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'role_id',
-        'city_id',
         'media_id',
         'created_at',
         'updated_at',
@@ -71,17 +64,29 @@ class User extends Authenticatable
 
     public static function myId()
     {
-        return Auth::user()->id;
+        return 1; // Auth::user()->id;
+    }
+
+    public function scopeMy($query)
+    {
+        return $query->where('user_id', self::myId());
+    }
+
+    public function scopeMe($query)
+    {
+        return $query->where('id', self::myId());
     }
 
     public function role()
     {
-        return $this->belongsTo('App\Role')->select('id', 'name');
+        return $this->belongsTo('App\Role')
+            ->select('id', 'name');
     }
 
     public function image()
     {
-        return $this->belongsTo('App\Media', 'media_id')->select('id', 'link');
+        return $this->belongsTo('App\Media', 'media_id')
+            ->select('id', 'link');
     }
 
     public function countFollow()
@@ -96,11 +101,6 @@ class User extends Authenticatable
         return $this->hasOne('App\Follower', 'follower_user_id')
             ->selectRaw('follower_user_id, count(*) AS count')
             ->groupBy('follower_user_id');
-    }
-
-    public function city()
-    {
-        return $this->belongsTo('App\City')->with('country');
     }
 
 }

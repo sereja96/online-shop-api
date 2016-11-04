@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFollowerTable extends Migration
+class CreateCategoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,10 @@ class CreateFollowerTable extends Migration
      */
     public function up()
     {
-        Schema::create('follower', function (Blueprint $table) {
+        Schema::create('category', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('follower_user_id')->unsigned();
+            $table->string('name')->unique();
             $table->nullableTimestamps();
-
-            $table->foreign('follower_user_id')
-                ->references('id')
-                ->on('user');
         });
     }
 
@@ -31,6 +26,6 @@ class CreateFollowerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('follower');
+        Schema::dropIfExists('category');
     }
 }

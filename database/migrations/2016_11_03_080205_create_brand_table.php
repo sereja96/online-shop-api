@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCountryTable extends Migration
+class CreateBrandTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,11 @@ class CreateCountryTable extends Migration
      */
     public function up()
     {
-        Schema::create('country', function (Blueprint $table) {
+        Schema::create('brand', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('media_id');
             $table->string('name')->unique();
-            $table->string('currency_code', 3);
-            $table->string('currency');
-            $table->string('icon', 2000)->nullable();
+            $table->boolean('is_deleted', false);
             $table->nullableTimestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateCountryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('country');
+        Schema::dropIfExists('brand');
     }
 }

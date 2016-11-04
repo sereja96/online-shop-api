@@ -1,9 +1,8 @@
 <?php
 
-use App\Role;
 use Illuminate\Database\Seeder;
 
-class RoleTableSeeder extends Seeder
+class CategoryTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,19 +13,19 @@ class RoleTableSeeder extends Seeder
     {
         $data = [
             [
-                'name' => Role::ADMIN
+                'name' => 'Shorts'
             ],
             [
-                'name' => Role::USER
+                'name' => 'T-Shirts'
             ],
             [
-                'name' => Role::SELLER
+                'name' => 'Boots'
             ]
         ];
 
         foreach ($data as $value)
         {
-            Role::create($value);
+            \App\Category::create($value);
         }
     }
 }

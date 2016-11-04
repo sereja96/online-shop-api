@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Folder;
-use App\Follower;
-use App\Media;
-use App\Role;
-use App\User;
-use App\UserSettings;
-use App\WishSettings;
-use Illuminate\Support\Facades\App;
+use App\Models\Follower;
+use App\Models\Media;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Tymon\JWTAuth\Facades\JWTAuth;

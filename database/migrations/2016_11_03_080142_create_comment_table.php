@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCityTable extends Migration
+class CreateCommentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,11 @@ class CreateCityTable extends Migration
      */
     public function up()
     {
-        Schema::create('city', function (Blueprint $table) {
+        Schema::create('comment', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('country_id')->unsigned();
-            $table->string('city')->index();
-            $table->string('state');
-            $table->string('region');
-            $table->integer('biggest_city')->default(0);
+            $table->integer('user_id');
+            $table->integer('product_id');
+            $table->text('text');
             $table->nullableTimestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateCityTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('city');
+        Schema::dropIfExists('comment');
     }
 }
