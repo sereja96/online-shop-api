@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Follower;
-use App\User;
+use App\Models\Follower;
+use App\Models\User;
+use App\Response;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -13,22 +14,18 @@ class FollowerController extends Controller
 {
     public static function follow($id)
     {
-        if ($id == Auth::user()->id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans('messages.follow_your_self')
-            ], 200);
+        $errorMessage = null;
+
+        if (User::isMyId($id)) {
+            $errorMessage = trans('messages.follow_your_self');
         }
 
         $user = User::with('userSettings')->find($id);
         if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans(
-                    'messages.not_found',
-                    ['item' => trans('model.user')]
-                )
-            ], 200);
+            $errorMessage = trans(
+                'messages.not_found',
+                ['item' => trans('model.user')]
+            );
         }
 
         $follower = Follower::where('user_id', $id)
@@ -45,17 +42,15 @@ class FollowerController extends Controller
             ]);
         }
 
-        if ($follower->saveOrFail()) {
-            return response()->json([
-                'status' => 'success',
-                'data' => $follower->status
-            ], 200);
+        if (!$follower->saveOrFail()) {
+            $errorMessage = trans('messages.unknown_error');
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => trans('messages.unknown_error')
-        ], 200);
+        if ($errorMessage) {
+            return Response::error($errorMessage);
+        }
+
+        return Response::success($follower->status);
     }
 
     public static function unFollow($id)

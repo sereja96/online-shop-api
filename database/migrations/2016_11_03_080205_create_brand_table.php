@@ -14,7 +14,9 @@ class CreateBrandTable extends Migration
     {
         Schema::create('brand', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('media_id');
             $table->string('name')->unique();
+            $table->boolean('is_deleted', false);
             $table->nullableTimestamps();
         });
     }

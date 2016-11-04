@@ -1,9 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -65,7 +64,17 @@ class User extends Authenticatable
 
     public static function myId()
     {
-        return Auth::user()->id;
+        return 1; // Auth::user()->id;
+    }
+
+    public function scopeMy($query)
+    {
+        return $query->where('user_id', self::myId());
+    }
+
+    public function scopeMe($query)
+    {
+        return $query->where('id', self::myId());
     }
 
     public function role()

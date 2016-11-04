@@ -28,12 +28,16 @@ Route::group([
     $router->post('login', 'AuthenticateController@authenticate');
     $router->post('logout', 'AuthenticateController@logout');
     $router->get('profile', 'UserController@getProfile');
-    $router->get('roles', 'UserController@getRoles');
     $router->put('/password/{email}', 'UserController@restorePassword');
-    $router->get('/public/wishes/{link}', 'PublicWishLinkController@getWishes');        //  +
-    $router->get('/cities/{search?}', 'CityController@searchCities');        //  +
     $router->patch('/profile', 'UserController@registration');
 
+    $router->get('/shops/my', 'ShopController@getMyShops');
+    $router->get('/shops', 'ShopController@getAllShops');
+
+    $router->get('/brands/my/{search?}', 'BrandController@getBrands');
+
+    $router->get('/products/category/{categoryIds}', 'ProductController@getProductsByCategory');
+    $router->get('/products/brand/{brandIds}', 'ProductController@getProductsByBrand');
 });
 
 /**
@@ -68,8 +72,7 @@ Route::group([
 ], function(\Illuminate\Routing\Router $router) {
     $router->get('/user/{id}', 'UserController@getUser');                   //  +
     $router->get('/users', 'UserController@getAllUsers');                   //  +
-    $router->get('/users/search/{search}', 'UserController@searchUsers');
-    $router->post('/users/vk', 'UserController@searchVkUsers');
+
     $router->delete('/profile', 'UserController@deleteProfile');            //  +
     $router->post('/profile', 'UserController@restoreProfile');             //  +
     $router->put('/profile', 'UserController@editProfile');
@@ -83,6 +86,4 @@ Route::group([
     $router->get('/followers/{id}', 'FollowerController@getUserFollowers'); //  +
     $router->get('/followed', 'FollowerController@getMyFollowed');          //  +
     $router->get('/followed/{id}', 'FollowerController@getUserFollowed');   //  +
-
-    $router->get('/countries/{search?}', 'CityController@searchCountries');  //  +
 });
