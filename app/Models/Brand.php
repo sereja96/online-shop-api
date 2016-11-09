@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Brand extends Model
+class Brand extends CommonModel
 {
     protected $table = 'brand';
 
@@ -27,18 +27,5 @@ class Brand extends Model
     public function image()
     {
         return $this->belongsTo('App\Models\Media');
-    }
-
-    public function scopeSearch($query, $search)
-    {
-        if ($search) {
-            return $query->where('name', 'LIKE', $search.'%');
-        }
-        return $query;
-    }
-
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('is_deleted', false);
     }
 }

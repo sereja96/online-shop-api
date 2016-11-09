@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Product extends Model
+class Product extends CommonModel
 {
     protected $table = 'product';
 
@@ -48,11 +48,6 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany('App\MediaProduct');
-    }
-
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('is_deleted', false);
     }
 
     public function scopeWithAll($query)

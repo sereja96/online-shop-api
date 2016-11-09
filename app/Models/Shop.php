@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Shop extends Model
+class Shop extends CommonModel
 {
     protected $table = 'shop';
 
@@ -37,20 +37,5 @@ class Shop extends Model
     public function products()
     {
         return $this->hasMany('App\Product')->with(['images']);
-    }
-
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('is_deleted', false);
-    }
-
-    public function scopeEnabled($query)
-    {
-        return $query->where('is_enable', true);
-    }
-
-    public function scopeWhereMy($query)
-    {
-        return $query->where('user_id', User::myId());
     }
 }

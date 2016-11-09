@@ -1,8 +1,9 @@
 <?php
 
-use App\Role;
-use App\User;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class UsersTableSeeder extends Seeder
                 'login' => 'sereja',
                 'email' => 'webberry@bk.ru',
                 'role_id' => Role::where('name', Role::ADMIN)->first()->id,
-                'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
+                'password' => Hash::make('qwerty')
             ],
             [
                 'first_name' => 'test',
@@ -28,7 +29,7 @@ class UsersTableSeeder extends Seeder
                 'login' => 'test1',
                 'email' => 'test@test.ru',
                 'role_id' => Role::where('name', Role::USER)->first()->id,
-                'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
+                'password' => Hash::make('qwerty')
             ],
             [
                 'first_name' => 'test',
@@ -36,7 +37,7 @@ class UsersTableSeeder extends Seeder
                 'login' => 'test2',
                 'email' => 'test2@test.ru',
                 'role_id' => Role::where('name', Role::SELLER)->first()->id,
-                'password' => \Illuminate\Support\Facades\Hash::make('qwerty')
+                'password' => Hash::make('qwerty')
             ]
         ];
 

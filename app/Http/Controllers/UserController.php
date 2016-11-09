@@ -6,11 +6,15 @@ use App\Models\Follower;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\User;
+use App\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 
 use App\Http\Requests;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
@@ -18,180 +22,76 @@ class UserController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function getProfile()
+    public function getProfile()
     {
+        $errorMessage = null;
         try {
-
             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => trans('messages.not_found', ['item' => trans('model.user')])
-                ], 200);
+                $errorMessage = trans('messages.not_found', ['item' => trans('model.user')]);
             }
-
-        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'token_expired'
-            ], $e->getStatusCode());
-
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'token_invalid'
-            ], $e->getStatusCode());
-
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'token_absent'
-            ], $e->getStatusCode());
-
+        } catch (TokenExpiredException $e) {
+            $errorMessage = 'token_expired';
+        } catch (TokenInvalidException $e) {
+            $errorMessage = 'token_invalid';
+        } catch (JWTException $e) {
+            $errorMessage = 'token_absent';
         }
 
-        // the token is valid and we have found the user via the sub claim
-        return UserController::getUser($user->id);
+        return $errorMessage
+            ? Response::error($errorMessage)
+            : UserController::getUser($user->id);
     }
 
-    public static function getUser($id)
+    public function getUser($id)
     {
-        $user = User::with(
-            [
-                'role',
-                'image',
-                'city'
-            ])
+        $user = User::with(['role', 'image', 'city'])
             ->where('id', $id)
             ->first();
 
-        if ($user) {
-            return response()->json([
-                'status' => 'success',
-                'data' => $user
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans('messages.not_found', ['item' => trans('model.user')])
-            ], 200);
-        }
+        return !!$user
+            ? Response::success($user)
+            : Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
     }
 
-    private static function getUsersFriends($users)
-    {
-        if (!$users || !count($users)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans('messages.not_found', ['item' => trans('model.user')])
-            ], 200);
-        } else {
-            $usersIFollowed = Follower::where('follower_user_id', Auth::user()->id)
-                ->select('user_id AS id', 'status')
-                ->get();
-
-            $newUsersArray = [];
-            if ($usersIFollowed) {
-                foreach ($users as $user)
-                {
-                    foreach ($usersIFollowed as $friend)
-                    {
-                        if ($user->id == $friend->id) {
-                            $user->my_follow_status = $friend->status;
-                            break;
-                        }
-                    }
-                    array_push($newUsersArray, $user);
-                }
-            } else {
-                foreach ($users as $user)
-                {
-                    $user->my_follow_status = null;
-                    array_push($newUsersArray, $user);
-                }
-            }
-
-            return response()->json([
-                'status' => 'success',
-                'data' => $newUsersArray
-            ], 200);
-        }
-    }
-
-    public static function getAllUsers()
+    public function getAllUsers()
     {
         $users = User::with('image')
             ->where('is_deleted', false)
             ->where('is_enable', true)
             ->get();
 
-        return UserController::getUsersFriends($users);
+        return Response::success($users);
     }
 
-    public static function searchVkUsers()
+    public function deleteProfile()
     {
-        if (Input::has('vk_ids')) {
-            $vkIds = Input::get('vk_ids');
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'unknown_error'
-            ], 200);
-        }
+        $user = User::find(User::myId());
 
-        $users = User::with('image')
-            ->whereIn('vk_id', $vkIds)
-            ->where('is_deleted', false)
-            ->where('is_enable', true)
-            ->get();
-
-        return UserController::getUsersFriends($users);
-    }
-
-    public static function searchUsers($search)
-    {
-
-    }
-
-    public static function deleteProfile()
-    {
-        $user = User::find(Auth::user()->id);
         if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans('messages.not_found', ['item' => trans('model.user')])
-            ], 200);
+            return Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
         } else {
             $user->is_deleted = true;
             $user->save();
 
-            return response()->json([
-                'status' => 'success',
-            ], 200);
+            return Response::success();
         }
     }
 
-    public static function restoreProfile()
+    public function restoreProfile()
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::find(User::myId());
+
         if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => trans('messages.not_found', ['item' => trans('model.user')])
-            ], 200);
+            return Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
         } else {
             $user->is_deleted = false;
             $user->save();
 
-            return response()->json([
-                'status' => 'success',
-            ], 200);
+            return Response::success();
         }
     }
 
-    private static function checkValidData($dataArray, &$errors) {
+    private function checkValidData($dataArray, &$errors) {
         if (!is_array($dataArray)) {
             return true;
         }
@@ -222,7 +122,7 @@ class UserController extends Controller
         return empty($errors);
     }
 
-    public static function registration()
+    public function registration()
     {
         $data = Input::all();
 
@@ -337,14 +237,14 @@ class UserController extends Controller
         }
     }
 
-    public static function editProfile()
+    public function editProfile()
     {
         return response()->json([
             'status' => 'ENDPOINT'
         ], 200);
     }
 
-    public static function changePassword()
+    public function changePassword()
     {
         $data = Input::all();
         if (!isset($data['oldPassword'], $data['newPassword'], $data['confirm'])
@@ -385,7 +285,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public static function restorePassword($email)
+    public function restorePassword($email)
     {
         $user = User::where('email', $email)
             ->first();
@@ -402,7 +302,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public static function getRoles()
+    public function getRoles()
     {
         $roles = Role::all();
         return response()->json([

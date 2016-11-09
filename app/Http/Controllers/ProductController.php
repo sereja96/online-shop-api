@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\CommonModel;
 use App\Models\Product;
 use App\Response;
-use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
@@ -12,13 +12,10 @@ class ProductController extends Controller
 {
     public static function getProductsByCategory($categoryIds)
     {
-        $categories = explode(',', $categoryIds);
-        if (!is_array($categories)) {
-            $categories = [$categories];
-        }
+        $categoryIds = CommonModel::splitIds($categoryIds);
 
         $products = Product::withAll()
-            ->whereInCategories($categories)
+            ->whereInCategories($categoryIds)
             ->notDeleted()
             ->get();
 
@@ -27,13 +24,10 @@ class ProductController extends Controller
 
     public static function getProductsByBrand($brandIds)
     {
-        $brands = explode(',', $brandIds);
-        if (!is_array($brands)) {
-            $brands = [$brands];
-        }
+        $brandIds = CommonModel::splitIds($brandIds);
 
         $products = Product::withAll()
-            ->whereInBrands($brands)
+            ->whereInBrands($brandIds)
             ->notDeleted()
             ->get();
 

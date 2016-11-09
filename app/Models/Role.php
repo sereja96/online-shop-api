@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Role extends Model
+class Role extends CommonModel
 {
     const ADMIN = 'admin';
     const USER = 'user';

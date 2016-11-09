@@ -67,11 +67,6 @@ class User extends Authenticatable
         return 1; // Auth::user()->id;
     }
 
-    public function scopeMy($query)
-    {
-        return $query->where('user_id', self::myId());
-    }
-
     public function scopeMe($query)
     {
         return $query->where('id', self::myId());

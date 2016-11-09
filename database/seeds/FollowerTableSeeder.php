@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Follower;
 use Illuminate\Database\Seeder;
 
 class FollowerTableSeeder extends Seeder
@@ -28,7 +29,7 @@ class FollowerTableSeeder extends Seeder
 
         foreach ($data as $item)
         {
-            $follower = new \App\Follower($item);
+            $follower = new Follower($item);
             $follower->save();
         }
     }
