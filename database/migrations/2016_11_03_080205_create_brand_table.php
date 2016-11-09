@@ -16,7 +16,8 @@ class CreateBrandTable extends Migration
             $table->increments('id');
             $table->integer('media_id');
             $table->string('name')->unique();
-            $table->boolean('is_deleted', false);
+            $table->boolean('is_deleted')->default(false);
+            $table->boolean('is_enable')->default(true);
             $table->nullableTimestamps();
         });
     }

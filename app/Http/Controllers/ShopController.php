@@ -12,7 +12,7 @@ class ShopController extends Controller
     public static function getMyShops()
     {
         $shops = Shop::with(['image'])
-            ->whereMy()
+            ->my()
             ->notDeleted()
             ->enabled()
             ->get();

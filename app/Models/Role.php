@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\CommonModel;
+use Illuminate\Database\Eloquent\Model;
 
-class Role extends CommonModel
+class Role extends Model
 {
     const ADMIN = 'admin';
     const USER = 'user';
@@ -23,6 +23,6 @@ class Role extends CommonModel
 
     public function users()
     {
-        return $this->hasMany('App\User');
+        return $this->hasMany(User::class);
     }
 }

@@ -10,24 +10,26 @@ use App\Http\Requests;
 
 class ProductController extends Controller
 {
-    public static function getProductsByCategory($categoryIds)
+    public static function getProductsByCategory($categoryIds, $search = null)
     {
         $categoryIds = CommonModel::splitIds($categoryIds);
 
         $products = Product::withAll()
             ->whereInCategories($categoryIds)
+            ->search($search)
             ->notDeleted()
             ->get();
 
         return Response::success($products);
     }
 
-    public static function getProductsByBrand($brandIds)
+    public static function getProductsByBrand($brandIds, $search = null)
     {
         $brandIds = CommonModel::splitIds($brandIds);
 
         $products = Product::withAll()
             ->whereInBrands($brandIds)
+            ->search($search)
             ->notDeleted()
             ->get();
 

@@ -20,7 +20,7 @@ class CreateProductTable extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->double('price');
-            $table->boolean('is_deleted', false);
+            $table->boolean('is_deleted')->default(false);
             $table->nullableTimestamps();
 
             $table->index('name');

@@ -26,16 +26,16 @@ class Shop extends CommonModel
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function image()
     {
-        return $this->belongsTo('App\Media');
+        return $this->belongsTo(Media::class);
     }
 
     public function products()
     {
-        return $this->hasMany('App\Product')->with(['images']);
+        return $this->hasMany(Product::class)->with(['images']);
     }
 }

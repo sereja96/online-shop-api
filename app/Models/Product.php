@@ -27,27 +27,27 @@ class Product extends CommonModel
 
     public function shop()
     {
-        return $this->belongsTo('App\Shop');
+        return $this->belongsTo(Shop::class);
     }
 
     public function brand()
     {
-        return $this->belongsTo('App\Brand');
+        return $this->belongsTo(Brand::class);
     }
 
     public function category()
     {
-        return $this->belongsTo('App\Category');
+        return $this->belongsTo(Category::class);
     }
 
     public function comments()
     {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany(Comment::class);
     }
 
     public function images()
     {
-        return $this->hasMany('App\MediaProduct');
+        return $this->hasMany(MediaProduct::class);
     }
 
     public function scopeWithAll($query)

@@ -2,22 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Follower extends Model
+class Follower extends CommonModel
 {
     protected $table = 'follower';
-
-    public static $_STATUS_REQUEST = 'request';
-    public static $_STATUS_SUBMIT = 'submit';
-
-    public static function getStatuses()
-    {
-        return [
-            self::$_STATUS_REQUEST,
-            self::$_STATUS_SUBMIT,
-        ];
-    }
 
     protected $fillable = [
         'user_id', 'follower_user_id', 'status'
@@ -26,4 +15,25 @@ class Follower extends Model
     protected $hidden = [
         'user_id', 'follower_user_id'
     ];
+
+    public static function getFollowerIds($userId)
+    {
+        return self::where('user_id', $userId)
+            ->notDeleted()
+            ->lists('follower_user_id AS id');
+    }
+
+    public static function getFollowedIds($userId)
+    {
+        return self::where('follower_user_id', $userId)
+            ->notDeleted()
+            ->lists('user_id AS id');
+    }
+
+    // Scopes
+    public function scopeWhereIFollow($query, $userId)
+    {
+        return $query->where('user_id', $userId)
+            ->where('follower_user_id', User::myId());
+    }
 }

@@ -5,8 +5,24 @@ namespace App;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CommonModel extends Model
+class CommonModel extends Model implements CommonScopes
 {
+
+    public static function splitIds($idsString, $delimiter = ',')
+    {
+        $ids = explode($delimiter, $idsString);
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        return $ids;
+    }
+
+    public function updateDeleted($isDeleted)
+    {
+        $this->is_deleted = $isDeleted;
+        return $this->saveOrFail();
+    }
 
     public function scopeNotDeleted($query)
     {
@@ -40,18 +56,13 @@ class CommonModel extends Model
             : $query;
     }
 
-    /**
-     * @param string $idsString
-     * @param string $delimiter
-     * @return array
-     */
-    public static function splitIds(string $idsString, string $delimiter = ',')
+    public function scopeWhereInIds($query, $ids)
     {
-        $ids = explode($delimiter, $idsString);
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
+        return $query->whereIn('id', $ids);
+    }
 
-        return $ids;
+    public function scopeWithAll($query)
+    {
+        return $query;
     }
 }

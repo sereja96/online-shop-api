@@ -21,11 +21,11 @@ class Brand extends CommonModel
 
     public function products()
     {
-        return $this->hasMany('App\Models\Product');
+        return $this->hasMany(Product::class);
     }
 
     public function image()
     {
-        return $this->belongsTo('App\Models\Media');
+        return $this->belongsTo(Media::class);
     }
 }
