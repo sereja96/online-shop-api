@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Brand;
 use Illuminate\Database\Seeder;
 
 class BrandTableSeeder extends Seeder
@@ -25,7 +26,7 @@ class BrandTableSeeder extends Seeder
 
         foreach ($data as $value)
         {
-            \App\Brand::create($value);
+            Brand::create($value);
         }
     }
 }

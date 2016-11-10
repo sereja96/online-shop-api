@@ -16,6 +16,7 @@ class CreateFollowerTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('follower_user_id')->unsigned();
+            $table->boolean('is_deleted')->default(false);
             $table->nullableTimestamps();
 
             $table->foreign('follower_user_id')

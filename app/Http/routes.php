@@ -28,16 +28,6 @@ Route::group([
     $router->post('login', 'AuthenticateController@authenticate');
     $router->post('logout', 'AuthenticateController@logout');
     $router->get('profile', 'UserController@getProfile');
-    $router->put('/password/{email}', 'UserController@restorePassword');
-    $router->patch('/profile', 'UserController@registration');
-
-    $router->get('/shops/my', 'ShopController@getMyShops');
-    $router->get('/shops', 'ShopController@getAllShops');
-
-    $router->get('/brands/my/{search?}', 'BrandController@getBrands');
-
-    $router->get('/products/category/{categoryIds}', 'ProductController@getProductsByCategory');
-    $router->get('/products/brand/{brandIds}', 'ProductController@getProductsByBrand');
 });
 
 /**
@@ -70,20 +60,26 @@ Route::group([
         'locale'
     ]
 ], function(\Illuminate\Routing\Router $router) {
+    $router->post('protected', 'AuthenticateController@isProtected');       //  +
     $router->get('/user/{id}', 'UserController@getUser');                   //  +
     $router->get('/users', 'UserController@getAllUsers');                   //  +
 
     $router->delete('/profile', 'UserController@deleteProfile');            //  +
     $router->post('/profile', 'UserController@restoreProfile');             //  +
     $router->put('/profile', 'UserController@editProfile');
-    $router->post('/password', 'UserController@changePassword');            //  +
 
     $router->patch('/follow/{id}', 'FollowerController@follow');            //  +
-    $router->post('/follow/{id}', 'FollowerController@decline');            //  +
-    $router->put('/follow/{id}', 'FollowerController@confirm');             //  +
     $router->delete('/follow/{id}', 'FollowerController@unFollow');         //  +
     $router->get('/followers', 'FollowerController@getMyFollowers');        //  +
     $router->get('/followers/{id}', 'FollowerController@getUserFollowers'); //  +
     $router->get('/followed', 'FollowerController@getMyFollowed');          //  +
     $router->get('/followed/{id}', 'FollowerController@getUserFollowed');   //  +
+
+    $router->get('/shops/my', 'ShopController@getMyShops');                 //  +
+    $router->get('/shops', 'ShopController@getAllShops');                   //  +
+
+    $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
+
+    $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
+    $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
 });

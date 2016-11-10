@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Shop;
 use Illuminate\Database\Seeder;
 
 class ShopTableSeeder extends Seeder
@@ -29,7 +30,7 @@ class ShopTableSeeder extends Seeder
 
         foreach ($data as $value)
         {
-            \App\Shop::create($value);
+            Shop::create($value);
         }
     }
 }

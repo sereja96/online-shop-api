@@ -2,38 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\CommonModel;
 use App\Models\Product;
 use App\Response;
-use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
 class ProductController extends Controller
 {
-    public static function getProductsByCategory($categoryIds)
+    public static function getProductsByCategory($categoryIds, $search = null)
     {
-        $categories = explode(',', $categoryIds);
-        if (!is_array($categories)) {
-            $categories = [$categories];
-        }
+        $categoryIds = CommonModel::splitIds($categoryIds);
 
         $products = Product::withAll()
-            ->whereInCategories($categories)
+            ->whereInCategories($categoryIds)
+            ->search($search)
             ->notDeleted()
             ->get();
 
         return Response::success($products);
     }
 
-    public static function getProductsByBrand($brandIds)
+    public static function getProductsByBrand($brandIds, $search = null)
     {
-        $brands = explode(',', $brandIds);
-        if (!is_array($brands)) {
-            $brands = [$brands];
-        }
+        $brandIds = CommonModel::splitIds($brandIds);
 
         $products = Product::withAll()
-            ->whereInBrands($brands)
+            ->whereInBrands($brandIds)
+            ->search($search)
             ->notDeleted()
             ->get();
 

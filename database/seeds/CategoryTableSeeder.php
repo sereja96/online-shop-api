@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class CategoryTableSeeder extends Seeder
@@ -25,7 +26,7 @@ class CategoryTableSeeder extends Seeder
 
         foreach ($data as $value)
         {
-            \App\Category::create($value);
+            Category::create($value);
         }
     }
 }

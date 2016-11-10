@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\CommonModel;
 
-class Product extends Model
+class Product extends CommonModel
 {
     protected $table = 'product';
 
@@ -27,32 +27,27 @@ class Product extends Model
 
     public function shop()
     {
-        return $this->belongsTo('App\Shop');
+        return $this->belongsTo(Shop::class);
     }
 
     public function brand()
     {
-        return $this->belongsTo('App\Brand');
+        return $this->belongsTo(Brand::class);
     }
 
     public function category()
     {
-        return $this->belongsTo('App\Category');
+        return $this->belongsTo(Category::class);
     }
 
     public function comments()
     {
-        return $this->hasMany('App\Comment');
+        return $this->hasMany(Comment::class);
     }
 
     public function images()
     {
-        return $this->hasMany('App\MediaProduct');
-    }
-
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('is_deleted', false);
+        return $this->hasMany(MediaProduct::class);
     }
 
     public function scopeWithAll($query)
