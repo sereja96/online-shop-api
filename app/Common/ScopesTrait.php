@@ -42,8 +42,14 @@ trait ScopesTrait
      */
     public function scopeWhereInIds($query, $ids)
     {
-        return $ids == null
-            ? $query
-            : $query->whereIn($this->getIdColumn(), $ids);
+        if (!$ids) {
+            return $query;
+        }
+
+        if (is_numeric($ids)) {
+            $ids = [$ids];
+        }
+
+        return $query->whereIn($this->getIdColumn(), $ids);
     }
 }

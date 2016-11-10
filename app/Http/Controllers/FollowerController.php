@@ -13,15 +13,16 @@ class FollowerController extends Controller
 {
     public function follow($id)
     {
-        $follower = Follower::whereIFollow($id)
+        $follower = Follower::withTrashed()
+            ->whereIFollow($id)
             ->first();
 
         if (!$follower) {
             if ($errorMessage = Auth::user()->follow($id)) {
                 return Response::error($errorMessage);
             }
-        } elseif ($follower->isDeleted()) {
-            $follower->updateDeleted(false);
+        } elseif ($follower->trashed()) {
+            $follower->restore();
         }
 
         return Response::success();
@@ -33,12 +34,12 @@ class FollowerController extends Controller
             return Response::error('access_deny');
         }
 
-        $follower = Follower::whereIFollow($id)
-            ->notDeleted()
+        $follower = Follower::withTrashed()
+            ->whereIFollow($id)
             ->first();
 
-        if ($follower) {
-            $follower->updateDeleted(true);
+        if ($follower && !$follower->trashed()) {
+            $follower->delete();
         }
 
         return Response::success();

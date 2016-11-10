@@ -51,7 +51,6 @@ class UserController extends Controller
     {
         $users = User::withAll()
             ->whereInIds($ids)
-            ->notDeleted()
             ->enabled()
             ->get();
 
@@ -61,8 +60,7 @@ class UserController extends Controller
     public function getUserById($id)
     {
         $user = User::withAll()
-            ->whereInIds([$id])
-            ->notDeleted()
+            ->whereInIds($id)
             ->enabled()
             ->first();
 
@@ -77,17 +75,14 @@ class UserController extends Controller
 
     public function deleteProfile()
     {
-        if ($errorMessage = Auth::user()->updateDeleted(true)) {
-            return Response::error($errorMessage);
-        }
-
+        Auth::user()->delete();
         return Response::success();
     }
 
     public function restoreProfile()
     {
-        if ($errorMessage = Auth::user()->updateDeleted(false)) {
-            return Response::error($errorMessage);
+        if (Auth::user()->trashed()) {
+            Auth::user()->restore();
         }
 
         return Response::success();

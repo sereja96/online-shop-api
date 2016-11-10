@@ -118,7 +118,6 @@ class User extends Authenticatable implements CommonScopes
     {
         return $this->hasOne(Follower::class, $this->getUserIdColumn())
             ->selectRaw($this->getUserIdColumn() . ', count(*) AS count')
-            ->notDeleted()
             ->groupBy($this->getUserIdColumn());
     }
 
@@ -126,21 +125,18 @@ class User extends Authenticatable implements CommonScopes
     {
         return $this->hasOne(Follower::class, 'follower_user_id')
             ->selectRaw('follower_user_id, count(*) AS count')
-            ->notDeleted()
             ->groupBy('follower_user_id');
     }
 
     public function followersIds()
     {
         return $this->hasMany(Follower::class, $this->getUserIdColumn())
-            ->notDeleted()
             ->lists('follower_user_id');
     }
 
     public function followedIds()
     {
         return $this->hasMany(Follower::class, 'follower_user_id')
-            ->notDeleted()
             ->lists($this->getUserIdColumn());
     }
 
