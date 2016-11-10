@@ -16,8 +16,9 @@ class CreateMediaProductTable extends Migration
             $table->increments('id');
             $table->integer('product_id');
             $table->string('link', 2000);
-            $table->boolean('is_deleted')->default(false);
+
             $table->nullableTimestamps();
+            $table->softDeletes();
         });
     }
 

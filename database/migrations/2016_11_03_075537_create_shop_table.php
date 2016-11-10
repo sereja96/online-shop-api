@@ -19,9 +19,10 @@ class CreateShopTable extends Migration
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->double('rate')->default(3);
-            $table->boolean('is_deleted')->default(false);
             $table->boolean('is_enable')->default(true);
+
             $table->nullableTimestamps();
+            $table->softDeletes();
 
             $table->index('name');
         });

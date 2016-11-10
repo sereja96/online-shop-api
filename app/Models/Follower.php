@@ -2,33 +2,23 @@
 
 namespace App\Models;
 
-use App\CommonModel;
+use App\Common\ScopesTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Follower extends CommonModel
+class Follower extends Model
 {
+    use SoftDeletes, ScopesTrait;
+
     protected $table = 'follower';
 
     protected $fillable = [
-        'user_id', 'follower_user_id', 'status'
-    ];
-
-    protected $hidden = [
         'user_id', 'follower_user_id'
     ];
 
-    public static function getFollowerIds($userId)
-    {
-        return self::where('user_id', $userId)
-            ->notDeleted()
-            ->lists('follower_user_id AS id');
-    }
-
-    public static function getFollowedIds($userId)
-    {
-        return self::where('follower_user_id', $userId)
-            ->notDeleted()
-            ->lists('user_id AS id');
-    }
+    protected $hidden = [
+        'deleted_at'
+    ];
 
     // Scopes
     public function scopeWhereIFollow($query, $userId)

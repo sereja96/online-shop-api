@@ -28,6 +28,11 @@ Route::group([
     $router->post('login', 'AuthenticateController@authenticate');
     $router->post('logout', 'AuthenticateController@logout');
     $router->get('profile', 'UserController@getProfile');
+
+    $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
+    $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
+    $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
+    $router->get('/shops', 'ShopController@getAllShops');                   //  +
 });
 
 /**
@@ -61,7 +66,7 @@ Route::group([
     ]
 ], function(\Illuminate\Routing\Router $router) {
     $router->post('protected', 'AuthenticateController@isProtected');       //  +
-    $router->get('/user/{id}', 'UserController@getUser');                   //  +
+    $router->get('/user/{id}', 'UserController@getUserById');               //  +
     $router->get('/users', 'UserController@getAllUsers');                   //  +
 
     $router->delete('/profile', 'UserController@deleteProfile');            //  +
@@ -76,10 +81,9 @@ Route::group([
     $router->get('/followed/{id}', 'FollowerController@getUserFollowed');   //  +
 
     $router->get('/shops/my', 'ShopController@getMyShops');                 //  +
-    $router->get('/shops', 'ShopController@getAllShops');                   //  +
 
-    $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
 
-    $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
-    $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
+
+
+
 });

@@ -12,7 +12,7 @@ class BrandController extends Controller
     {
         $brands = Brand::with('image')
             ->search($search)
-            ->notDeleted()
+            ->enabled()
             ->get();
 
         return Response::success($brands);

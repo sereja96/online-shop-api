@@ -7,21 +7,20 @@ use App\Models\User;
 use App\Response;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class FollowerController extends Controller
 {
     public function follow($id)
     {
-        if ($errorMessage = User::checkForFollow($id)) {
-            return Response::error($errorMessage);
-        }
-
         $follower = Follower::whereIFollow($id)
             ->first();
 
         if (!$follower) {
-            User::follow($id);
-        } else {
+            if ($errorMessage = Auth::user()->follow($id)) {
+                return Response::error($errorMessage);
+            }
+        } elseif ($follower->isDeleted()) {
             $follower->updateDeleted(false);
         }
 
@@ -30,8 +29,8 @@ class FollowerController extends Controller
 
     public function unFollow($id)
     {
-        if ($errorMessage = User::checkForFollow($id)) {
-            return Response::error($errorMessage);
+        if (User::isMyId($id)) {
+            return Response::error('access_deny');
         }
 
         $follower = Follower::whereIFollow($id)
@@ -47,38 +46,44 @@ class FollowerController extends Controller
 
     public function getMyFollowers()
     {
-        $ids = Follower::getFollowerIds(User::myId());
-        $users = User::searchUsers($ids);
+        $ids = Auth::user()->followersIds();
+        $users = $this->getUsersByIds($ids);
         return Response::success($users);
     }
 
     public function getUserFollowers($id)
     {
-        if (!User::isExists($id)) {
+        if (!$user = User::find($id)) {
             return Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
         }
 
-        $ids = Follower::getFollowerIds($id);
-        $users = User::searchUsers($ids);
+        $ids = $user->followersIds();
+        $users = $this->getUsersByIds($ids);
         return Response::success($users);
     }
 
     public function getMyFollowed()
     {
-        $ids = Follower::getFollowedIds(User::myId());
-        $users = User::searchUsers($ids);
+        $ids = Auth::user()->followedIds();
+        $users = $this->getUsersByIds($ids);
         return Response::success($users);
     }
 
     public function getUserFollowed($id)
     {
-        if (!User::isExists($id)) {
+        if (!$user = User::find($id)) {
             return Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
         }
 
-        $ids = Follower::getFollowedIds($id);
-        $users = User::searchUsers($ids);
+        $ids = $user->followedIds();
+        $users = $this->getUsersByIds($ids);
         return Response::success($users);
+    }
+
+    private function getUsersByIds($ids)
+    {
+        $userController = new UserController();
+        return $userController->searchUsers($ids);
     }
 
 }
