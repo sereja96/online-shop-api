@@ -17,9 +17,10 @@ class CreateCommentTable extends Migration
             $table->integer('user_id');
             $table->integer('product_id');
             $table->text('text');
-            $table->boolean('is_deleted')->default(false);
             $table->boolean('is_enable')->default(true);
+
             $table->nullableTimestamps();
+            $table->softDeletes();
         });
     }
 

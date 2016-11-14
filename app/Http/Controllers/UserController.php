@@ -36,7 +36,7 @@ class UserController extends Controller
 
         $currentUser = null;
         if (!$errorMessage) {
-            $currentUser = User::getUser($user->id);
+            $currentUser = $this->getUserById($user->id);
             if (!$currentUser) {
                 $errorMessage = trans('messages.not_found', ['item' => trans('model.user')]);
             }
@@ -47,34 +47,42 @@ class UserController extends Controller
             : Response::success($currentUser);
     }
 
+    public function searchUsers($ids = null)
+    {
+        $users = User::withAll()
+            ->whereInIds($ids)
+            ->enabled()
+            ->get();
+
+        return $users;
+    }
+
+    public function getUserById($id)
+    {
+        $user = User::withAll()
+            ->whereInIds($id)
+            ->enabled()
+            ->first();
+
+        return $user;
+    }
+
     public function getAllUsers()
     {
-        $users = User::searchUsers();
+        $users = $this->searchUsers();
         return Response::success($users);
     }
 
     public function deleteProfile()
     {
-        if ($errorMessage = Auth::user()->updateDeleted(true)) {
-            return Response::error($errorMessage);
-        }
-
+        Auth::user()->delete();
         return Response::success();
-    }
-
-    public function getUser($id)
-    {
-        if ($user = User::getUser($id)) {
-            return Response::success($user);
-        }
-
-        return Response::error(trans('messages.not_found', ['item' => trans('model.user')]));
     }
 
     public function restoreProfile()
     {
-        if ($errorMessage = Auth::user()->updateDeleted(false)) {
-            return Response::error($errorMessage);
+        if (Auth::user()->trashed()) {
+            Auth::user()->restore();
         }
 
         return Response::success();
@@ -96,7 +104,7 @@ class UserController extends Controller
             }
 
             $errors = [];
-            if (!User::checkValidData([
+            if (!$this->checkValidData([
                     'LOGIN' => $data['login'],
                     'PASSWORD' => $data['password'],
                     'FIRST_NAME' => $data['first_name']
@@ -104,7 +112,7 @@ class UserController extends Controller
                 return Response::error($errors);
             }
 
-            if (User::isExistsLogin($data['login'])) {
+            if ($this->isExistsLogin($data['login'])) {
                 return Response::error('user_already_exists');
             }
 
@@ -121,12 +129,14 @@ class UserController extends Controller
             ];
 
             $user = User::create($userResult);
-
-            if ($token = User::auth([
+            $credentials = [
                 'login' => $user->login,
                 'password' => $data['password']
-            ])) {
-                $user = User::getUser(User::myId());
+            ];
+
+            $authController = new AuthenticateController();
+            if ($token = $authController->createToken($credentials)) {
+                $user = $this->getUserById(User::myId());
                 return Response::success([
                     'token' => $token,
                     'user' => $user
@@ -142,6 +152,43 @@ class UserController extends Controller
     public function editProfile()
     {
         return Response::success();
+    }
+
+    private function isExistsLogin($login)
+    {
+        return User::where('login', $login)
+            ->first();
+    }
+
+    private function checkValidData($dataArray, &$errors) {
+        if (!is_array($dataArray)) {
+            return true;
+        }
+
+        if (!is_array($errors)) {
+            $errors = [];
+        }
+
+        foreach ($dataArray as $key => $dataField)
+        {
+            if (!empty(User::$_VALID_DATA['MIN'][$key])
+                && mb_strlen($dataField) < User::$_VALID_DATA['MIN'][$key]) {
+                array_push(
+                    $errors,
+                    User::$_VALID_DATA['LABEL'][$key] . " не может быть короче " .User::$_VALID_DATA['MIN'][$key]. " символов"
+                );
+            }
+
+            if (!empty(User::$_VALID_DATA['MAX'][$key])
+                && mb_strlen($dataField) > User::$_VALID_DATA['MAX'][$key]) {
+                array_push(
+                    $errors,
+                    User::$_VALID_DATA['LABEL'][$key] . " не может быть длинее " .User::$_VALID_DATA['MAX'][$key]. " символов"
+                );
+            }
+        }
+
+        return empty($errors);
     }
 
 }

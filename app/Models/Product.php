@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
-use App\CommonModel;
+use App\Common\CommonScopes;
+use App\Common\EnableTrait;
+use App\Common\SearchTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends CommonModel
+class Product extends Model implements CommonScopes
 {
+    use SoftDeletes, EnableTrait, SearchTrait;
+
     protected $table = 'product';
 
     protected $fillable = [
@@ -22,6 +28,7 @@ class Product extends CommonModel
         'brand_id',
         'created_at',
         'updated_at',
+        'deleted_at',
         'shop_id',
     ];
 

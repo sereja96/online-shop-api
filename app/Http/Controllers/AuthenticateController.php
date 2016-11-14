@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticateController extends Controller
 {
@@ -18,14 +20,23 @@ class AuthenticateController extends Controller
             : Response::error();
     }
 
+    public function createToken($credentials)
+    {
+        try {
+            $token = JWTAuth::attempt($credentials);
+        } catch (JWTException $e) {
+            return false;
+        }
+
+        return $token;
+    }
+
     public function authenticate(Request $request)
     {
         $credentials = $request->only(['login', 'password']);
 
-        if ($token = User::auth($credentials)) {
-            $currentUser = User::getUser(User::myId());
-
-            if ($currentUser) {
+        if ($token = $this->createToken($credentials)) {
+            if ($currentUser = $this->getFullUser()) {
                 return Response::success([
                     'token' => $token,
                     'user' => $currentUser
@@ -40,5 +51,13 @@ class AuthenticateController extends Controller
     {
         Auth::logout();
         return Response::success();
+    }
+
+    private function getFullUser()
+    {
+        $userController = new UserController();
+        return Auth::check()
+            ? $userController->getUserById(User::myId())
+            : null;
     }
 }
