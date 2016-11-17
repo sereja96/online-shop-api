@@ -15,8 +15,9 @@ class CreateMediaTable extends Migration
         Schema::create('media', function (Blueprint $table) {
             $table->increments('id');
             $table->string('link');
-            $table->boolean('is_deleted')->default(false);
+
             $table->nullableTimestamps();
+            $table->softDeletes();
         });
     }
 

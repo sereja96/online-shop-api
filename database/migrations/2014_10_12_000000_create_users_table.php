@@ -21,10 +21,11 @@ class CreateUsersTable extends Migration
             $table->string('login')->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password', 64);
-            $table->boolean('is_deleted')->default(false);
             $table->boolean('is_enable')->default(true);
+
             $table->rememberToken();
             $table->nullableTimestamps();
+            $table->softDeletes();
         });
     }
 

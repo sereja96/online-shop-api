@@ -9,21 +9,19 @@ use App\Response;
 
 class ShopController extends Controller
 {
-    public static function getMyShops()
+    public function getMyShops()
     {
         $shops = Shop::with(['image'])
             ->my()
-            ->notDeleted()
             ->enabled()
             ->get();
 
         return Response::success($shops);
     }
 
-    public static function getAllShops()
+    public function getAllShops()
     {
-        $shops = Shop::with(['image'])
-            ->notDeleted()
+        $shops = Shop::withAll()
             ->enabled()
             ->get();
 

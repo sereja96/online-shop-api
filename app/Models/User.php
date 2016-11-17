@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
-use App\bool;
-use App\CommonScopes;
+use App\Common\CommonScopes;
+use App\Common\EnableTrait;
+use App\Common\ScopesTrait;
+use App\Common\SearchTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class User extends Authenticatable implements CommonScopes
 {
+    use SoftDeletes, EnableTrait, SearchTrait, ScopesTrait;
+
+    protected $table = 'user';
+
+    protected $searchField = 'login';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -60,8 +67,6 @@ class User extends Authenticatable implements CommonScopes
         ]
     ];
 
-    protected $table = 'user';
-
     public static function isMyId($id)
     {
         return $id == User::myId();
@@ -74,108 +79,26 @@ class User extends Authenticatable implements CommonScopes
             : null;
     }
 
-    public static function auth($credentials)
-    {
-        try {
-            $token = JWTAuth::attempt($credentials);
-        } catch (JWTException $e) {
-            return false;
-        }
-
-        return $token;
-    }
-
-    public static function searchUsers($ids = null)
-    {
-        $users = self::withAll()
-            ->whereInIds($ids)
-            ->notDeleted()
-            ->enabled()
-            ->get();
-
-        return $users;
-    }
-
-    public static function getUser($id)
-    {
-        $user = self::withAll()
-            ->whereInIds([$id])
-            ->notDeleted()
-            ->enabled()
-            ->first();
-
-        return $user;
-    }
-
-    public static function checkForFollow($userId)
+    public function follow($userId)
     {
         $errorMessage = null;
 
         if (User::isMyId($userId)) {
-            $errorMessage = trans('messages.your_self');
-        }
-
-        if (!self::isExists($userId)) {
+            $errorMessage = trans('messages.access_deny');
+        } elseif (!$user = User::find($userId)) {
             $errorMessage = trans('messages.not_found', ['item' => trans('model.user')]);
         }
 
-        return $errorMessage;
-    }
+        if ($errorMessage) {
+            return $errorMessage;
+        }
 
-    public static function isExists($userId)
-    {
-        return User::find($userId);
-    }
-
-    public static function isExistsLogin($login)
-    {
-        return User::where('login', $login)
-            ->first();
-    }
-
-    public static function follow($userId)
-    {
-        return self::create([
-            'user_id' => $userId,
+        Follower::create([
+            'user_id' => $user->id,
             'follower_user_id' => User::myId()
         ]);
-    }
 
-    public static function checkValidData($dataArray, &$errors) {
-        if (!is_array($dataArray)) {
-            return true;
-        }
-
-        if (!is_array($errors)) {
-            $errors = [];
-        }
-
-        foreach ($dataArray as $key => $dataField)
-        {
-            if (!empty(User::$_VALID_DATA['MIN'][$key])
-                && mb_strlen($dataField) < User::$_VALID_DATA['MIN'][$key]) {
-                array_push(
-                    $errors,
-                    User::$_VALID_DATA['LABEL'][$key] . " не может быть короче " .User::$_VALID_DATA['MIN'][$key]. " символов"
-                );
-            }
-
-            if (!empty(User::$_VALID_DATA['MAX'][$key])
-                && mb_strlen($dataField) > User::$_VALID_DATA['MAX'][$key]) {
-                array_push(
-                    $errors,
-                    User::$_VALID_DATA['LABEL'][$key] . " не может быть длинее " .User::$_VALID_DATA['MAX'][$key]. " символов"
-                );
-            }
-        }
-
-        return empty($errors);
-    }
-
-    public function updateDeleted($isDeleted)
-    {
-        $this->is_deleted = $isDeleted;
-        return $this->saveOrFail();
+        return false;
     }
 
     // Relations
@@ -193,63 +116,34 @@ class User extends Authenticatable implements CommonScopes
 
     public function countFollow()
     {
-        return $this->hasOne(Follower::class, 'user_id')
-            ->selectRaw('user_id, count(*) AS count')
-            ->notDeleted()
-            ->groupBy('user_id');
+        return $this->hasOne(Follower::class, $this->getUserIdColumn())
+            ->selectRaw($this->getUserIdColumn() . ', count(*) AS count')
+            ->groupBy($this->getUserIdColumn());
     }
 
     public function countFollowed()
     {
         return $this->hasOne(Follower::class, 'follower_user_id')
             ->selectRaw('follower_user_id, count(*) AS count')
-            ->notDeleted()
             ->groupBy('follower_user_id');
+    }
+
+    public function followersIds()
+    {
+        return $this->hasMany(Follower::class, $this->getUserIdColumn())
+            ->lists('follower_user_id');
+    }
+
+    public function followedIds()
+    {
+        return $this->hasMany(Follower::class, 'follower_user_id')
+            ->lists($this->getUserIdColumn());
     }
 
     // Scopes
     public function scopeMe($query)
     {
-        return $query->where('id', self::myId());
-    }
-
-    public function scopeWhereInIds($query, $ids)
-    {
-        return $ids == null
-            ? $query
-            : $query->whereIn('id', $ids);
-    }
-
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('is_deleted', false);
-    }
-
-    public function scopeDeleted($query)
-    {
-        return $query->where('id_deleted', true);
-    }
-
-    public function scopeEnabled($query)
-    {
-        return $query->where('is_enable', true);
-    }
-
-    public function scopeNotEnabled($query)
-    {
-        return $query->where('is_enable', false);
-    }
-
-    public function scopeMy($query)
-    {
-        return $query->where('user_id', User::myId());
-    }
-
-    public function scopeSearch($query, $search)
-    {
-        return $search
-            ? $query->where('name', 'LIKE', $search.'%')
-            : $query;
+        return $query->where($this->getIdColumn(), self::myId());
     }
 
     public function scopeWithAll($query)
