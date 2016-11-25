@@ -20,7 +20,7 @@ class Shop extends Model implements CommonScopes
         'updated_at',
         'media_id',
         'user_id',
-        'is_deleted',
+        'deleted_at',
         'is_enable',
     ];
 
@@ -38,12 +38,22 @@ class Shop extends Model implements CommonScopes
 
     public function image()
     {
-        return $this->belongsTo(Media::class);
+        return $this->belongsTo(Media::class, 'media_id');
     }
 
     public function products()
     {
-        return $this->hasMany(Product::class)->with(['images']);
+        return $this->hasMany(Product::class)
+            ->withAll()
+            ->enabled();
+    }
+
+    public function productCount()
+    {
+        return $this->hasOne(Product::class)
+            ->selectRaw('shop_id, count(id) AS count')
+            ->enabled()
+            ->groupBy('shop_id');
     }
 
     public function scopeWithAll($query)

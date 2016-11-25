@@ -28,6 +28,16 @@ Route::group([
     $router->post('login', 'AuthenticateController@authenticate');
     $router->post('logout', 'AuthenticateController@logout');
     $router->get('profile', 'UserController@getProfile');
+
+    $router->get('/shops', 'ShopController@getAllShops');                       //  +
+    $router->get('/shops/popular/{count?}', 'ShopController@getPopularShops');  //  +
+    $router->get('/shop/{id}', 'ShopController@getShop');                       //  +
+
+    $router->get('/categories/popular/{count?}', 'CategoryController@getPopularCategories');    //  +
+    $router->get('/category/{id}', 'CategoryController@getCategory');                           //  +
+
+    $router->get('/brands/popular/{count?}/{search?}', 'BrandController@getBrands');   //  +
+    $router->get('/brand/{id}', 'BrandController@getBrand');    //  +
 });
 
 /**
@@ -79,5 +89,4 @@ Route::group([
     $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
     $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
     $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
-    $router->get('/shops', 'ShopController@getAllShops');                   //  +
 });

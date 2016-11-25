@@ -52,4 +52,16 @@ trait ScopesTrait
 
         return $query->whereIn($this->getIdColumn(), $ids);
     }
+
+    /**
+     * @param $query
+     * @param int $count
+     * @return mixed
+     */
+    public function scopeTakeCount($query, $count = 0)
+    {
+        return $count > 0
+            ? $query->take($count)
+            : $query;
+    }
 }
