@@ -30,6 +30,7 @@ class Product extends Model implements CommonScopes
         'updated_at',
         'deleted_at',
         'shop_id',
+        'is_enable'
     ];
 
     public function shop()

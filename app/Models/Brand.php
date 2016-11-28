@@ -24,11 +24,20 @@ class Brand extends Model implements CommonScopes
         'updated_at',
         'deleted_at',
         'media_id',
+        'is_enable',
     ];
 
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function productCount()
+    {
+        return $this->hasOne(Product::class)
+            ->selectRaw('brand_id, count(id) AS count')
+            ->enabled()
+            ->groupBy('brand_id');
     }
 
     public function image()
