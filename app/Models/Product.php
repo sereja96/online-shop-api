@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Common\CommonScopes;
 use App\Common\EnableTrait;
+use App\Common\ScopesTrait;
 use App\Common\SearchTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model implements CommonScopes
 {
-    use SoftDeletes, EnableTrait, SearchTrait;
+    use SoftDeletes, EnableTrait, SearchTrait, ScopesTrait;
 
     protected $table = 'product';
 
@@ -30,7 +31,8 @@ class Product extends Model implements CommonScopes
         'updated_at',
         'deleted_at',
         'shop_id',
-        'is_enable'
+        'is_enable',
+        'pivot'
     ];
 
     public function shop()

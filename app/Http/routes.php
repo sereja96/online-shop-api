@@ -38,6 +38,8 @@ Route::group([
 
     $router->get('/brands/popular/{count?}/{search?}', 'BrandController@getBrands');   //  +
     $router->get('/brand/{id}', 'BrandController@getBrand');    //  +
+
+    $router->get('/orders', 'OrderController@getMyOrders');         //  +
 });
 
 /**
@@ -89,4 +91,13 @@ Route::group([
     $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
     $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
     $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
+
+    $router->get('/product/{id}', 'ProductController@getProductById');
+
+    $router->get('/basket', 'BasketController@getBasket');                                  //  +
+    $router->post('/basket/{productId}/{count?}', 'BasketController@addProduct');           //  +
+    $router->delete('/basket/{basketId}', 'BasketController@removeProduct');                //  +
+    $router->patch('/basket/{basketId}/{count}', 'BasketController@changeProductCount');   //  +
+
+
 });
