@@ -35,4 +35,18 @@ class ProductController extends Controller
 
         return Response::success($products);
     }
+
+    public function getProductById($id)
+    {
+        $product = Product::withAll()
+            ->whereInIds($id)
+            ->enabled()
+            ->first();
+
+        if ($product) {
+            return Response::success($product);
+        }
+
+        return Response::error('product_not_found');
+    }
 }

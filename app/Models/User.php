@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Basket;
 use App\Common\CommonScopes;
 use App\Common\EnableTrait;
 use App\Common\ScopesTrait;
