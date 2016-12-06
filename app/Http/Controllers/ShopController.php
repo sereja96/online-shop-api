@@ -28,11 +28,12 @@ class ShopController extends Controller
         return Response::success($shops);
     }
 
-    public function getPopularShops($count = 6)
+    public function getPopularShops($count = 6, $search = null)
     {
         $shops = Shop::with(['image', 'productCount'])
             ->enabled()
             ->orderBy('rate', 'DESC')
+            ->search($search)
             ->takeCount($count)
             ->get();
 

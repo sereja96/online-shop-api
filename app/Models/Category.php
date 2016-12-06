@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Common\CommonScopes;
 use App\Common\ScopesTrait;
+use App\Common\SearchTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model implements CommonScopes
 {
-    use ScopesTrait;
+    use ScopesTrait, SearchTrait;
 
     protected $table = 'category';
 

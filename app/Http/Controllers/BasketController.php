@@ -46,9 +46,9 @@ class BasketController extends Controller
         return Response::error('unknown_error');
     }
 
-    public function removeProduct($basketId)
+    public function removeProduct($productId)
     {
-        $basketProduct = Basket::where('id', $basketId)
+        $basketProduct = Basket::where('product_id', $productId)
             ->my()
             ->first();
 

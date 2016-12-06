@@ -30,16 +30,16 @@ Route::group([
     $router->get('profile', 'UserController@getProfile');
 
     $router->get('/shops', 'ShopController@getAllShops');                       //  +
-    $router->get('/shops/popular/{count?}', 'ShopController@getPopularShops');  //  +
+    $router->get('/shops/popular/{count?}/{search?}', 'ShopController@getPopularShops');  //  +
     $router->get('/shop/{id}', 'ShopController@getShop');                       //  +
 
-    $router->get('/categories/popular/{count?}', 'CategoryController@getPopularCategories');    //  +
+    $router->get('/categories/popular/{count?}/{search?}', 'CategoryController@getPopularCategories');    //  +
     $router->get('/category/{id}', 'CategoryController@getCategory');                           //  +
 
     $router->get('/brands/popular/{count?}/{search?}', 'BrandController@getBrands');   //  +
     $router->get('/brand/{id}', 'BrandController@getBrand');    //  +
 
-    $router->get('/orders', 'OrderController@getMyOrders');         //  +
+    $router->get('/user/{id}', 'UserController@getUserById');               //  +
 });
 
 /**
@@ -73,7 +73,7 @@ Route::group([
     ]
 ], function(\Illuminate\Routing\Router $router) {
     $router->post('protected', 'AuthenticateController@isProtected');       //  +
-    $router->get('/user/{id}', 'UserController@getUserById');               //  +
+
     $router->get('/users', 'UserController@getAllUsers');                   //  +
 
     $router->delete('/profile', 'UserController@deleteProfile');            //  +
@@ -96,8 +96,8 @@ Route::group([
 
     $router->get('/basket', 'BasketController@getBasket');                                  //  +
     $router->post('/basket/{productId}/{count?}', 'BasketController@addProduct');           //  +
-    $router->delete('/basket/{basketId}', 'BasketController@removeProduct');                //  +
+    $router->delete('/basket/{productId}', 'BasketController@removeProduct');                //  +
     $router->patch('/basket/{basketId}/{count}', 'BasketController@changeProductCount');   //  +
 
-
+    $router->get('/orders', 'OrderController@getMyOrders');         //  +
 });

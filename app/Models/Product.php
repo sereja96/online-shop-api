@@ -60,9 +60,17 @@ class Product extends Model implements CommonScopes
         return $this->hasMany(MediaProduct::class);
     }
 
+    public function scopeSelectBasketStatus($query)
+    {
+        return $query->selectRaw(
+            "product.*, (SELECT true from basket where product_id=product.id) AS basket_status"
+        );
+    }
+
     public function scopeWithAll($query)
     {
-        return $query->with(['images', 'shop', 'brand', 'category']);
+        return $query->with(['images', 'shop', 'brand', 'category'])
+            ->selectBasketStatus();
     }
 
     public function scopeWhereInCategories($query, $categories)

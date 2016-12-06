@@ -11,10 +11,8 @@ class OrderController extends Controller
 {
     public function getMyOrders()
     {
-    //    Order::find(1)->products()->detach([1,2]);
-
         $orders = Order::withAll()
-    //        ->my()
+            ->my()
             ->get();
 
         return Response::success($orders);
