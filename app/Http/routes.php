@@ -87,7 +87,7 @@ Route::group([
     $router->get('/followed', 'FollowerController@getMyFollowed');          //  +
     $router->get('/followed/{id}', 'FollowerController@getUserFollowed');   //  +
 
-    $router->get('/shops/my', 'ShopController@getMyShops');                 //  +
+    $router->get('/shops/my/{count?}', 'ShopController@getMyShops');                 //  +
     $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
     $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
     $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +

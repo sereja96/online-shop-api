@@ -9,11 +9,12 @@ use App\Response;
 
 class ShopController extends Controller
 {
-    public function getMyShops()
+    public function getMyShops($count = null)
     {
         $shops = Shop::with(['image'])
             ->my()
             ->enabled()
+            ->takeCount($count)
             ->get();
 
         return Response::success($shops);
