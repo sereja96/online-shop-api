@@ -100,4 +100,7 @@ Route::group([
     $router->patch('/basket/{basketId}/{count}', 'BasketController@changeProductCount');   //  +
 
     $router->get('/orders', 'OrderController@getMyOrders');         //  +
+    $router->post('/order', 'OrderController@makeOrder');
+
+    $router->get('/discount/{search}', 'OrderController@searchDiscount');
 });

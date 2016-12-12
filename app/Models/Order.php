@@ -20,6 +20,13 @@ class Order extends Model implements CommonScopes
         'updated_at'
     ];
 
+    protected $fillable = [
+        'address',
+        'phone',
+        'user_id',
+        'discount_id'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class)->with('image');
