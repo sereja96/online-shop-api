@@ -46,7 +46,7 @@ Route::group([
  *  Admin Routes (Forbidden for not admin users)
  */
 Route::group([
-    'prefix' => 'admin',
+    'prefix' => 'v1/admin',
     'middleware' => [
         'cors',
         'jwt.auth',
@@ -58,6 +58,8 @@ Route::group([
     $router->get('/test', function () {
         return "success test!!";
     });
+
+    $router->get('/report/{name}', 'ReportController@getReportData');
 
 });
 
@@ -103,4 +105,5 @@ Route::group([
     $router->post('/order', 'OrderController@makeOrder');
 
     $router->get('/discount/{search}', 'OrderController@searchDiscount');
+
 });
