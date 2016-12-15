@@ -272,13 +272,51 @@ class ReportController extends Controller
         $data = $this->initData(12);
 
         if ($orders) {
-            foreach ($orders as $key => $order)
+            foreach ($orders as $key => $orderDate)
             {
-                if ($order) {
-                    $dateTime = Carbon::createFromFormat('Y-m-d H:i:s', $order);
+                if ($orderDate) {
+                    $dateTime = Carbon::createFromFormat('Y-m-d H:i:s', $orderDate);
                     $data[$dateTime->month-1]++;
                 }
             }
+        }
+
+        return $data;
+    }
+
+    private function calculateAverageCategoryCost()
+    {
+        $categories = Category::all();
+
+        $data = [];
+        if ($categories) {
+            $labels = [];
+            $costs = [];
+
+            foreach ($categories as $category)
+            {
+                array_push($labels, $category->name);
+
+                $totalCost = 0;
+                $averageCost = 0;
+                $products = $category->products;
+
+                if ($products) {
+                    foreach ($products as $product)
+                    {
+                        $totalCost += $product->cost;
+                    }
+
+                    $averageCost = $totalCost / count($products);
+                }
+
+                array_push($costs, $averageCost);
+            }
+
+            $data = [
+                'labels' => $labels,
+                'costs' => $costs
+            ];
         }
 
         return $data;

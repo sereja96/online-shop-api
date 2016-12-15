@@ -14,6 +14,7 @@ class CreateCategoryTable extends Migration
     {
         Schema::create('category', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('media_id')->nullable();
             $table->string('name')->unique();
             $table->nullableTimestamps();
         });

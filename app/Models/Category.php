@@ -39,8 +39,7 @@ class Category extends Model implements CommonScopes
 
     public function image()
     {
-        return $this->hasOne(Product::class)
-            ->selectRaw("null");
+        return $this->belongsTo(Media::class, 'media_id');
     }
 
     public function scopeWithAll($query)
