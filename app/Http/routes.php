@@ -30,23 +30,23 @@ Route::group([
     $router->get('profile', 'UserController@getProfile');
 
     $router->get('/shops', 'ShopController@getAllShops');                       //  +
-    $router->get('/shops/popular/{count?}', 'ShopController@getPopularShops');  //  +
+    $router->get('/shops/popular/{count?}/{search?}', 'ShopController@getPopularShops');  //  +
     $router->get('/shop/{id}', 'ShopController@getShop');                       //  +
 
-    $router->get('/categories/popular/{count?}', 'CategoryController@getPopularCategories');    //  +
+    $router->get('/categories/popular/{count?}/{search?}', 'CategoryController@getPopularCategories');    //  +
     $router->get('/category/{id}', 'CategoryController@getCategory');                           //  +
 
     $router->get('/brands/popular/{count?}/{search?}', 'BrandController@getBrands');   //  +
     $router->get('/brand/{id}', 'BrandController@getBrand');    //  +
 
-    $router->get('/orders', 'OrderController@getMyOrders');         //  +
+    $router->get('/user/{id}', 'UserController@getUserById');               //  +
 });
 
 /**
  *  Admin Routes (Forbidden for not admin users)
  */
 Route::group([
-    'prefix' => 'admin',
+    'prefix' => 'v1/admin',
     'middleware' => [
         'cors',
         'jwt.auth',
@@ -58,6 +58,8 @@ Route::group([
     $router->get('/test', function () {
         return "success test!!";
     });
+
+    $router->get('/report/{name}', 'ReportController@getReportData');
 
 });
 
@@ -73,7 +75,7 @@ Route::group([
     ]
 ], function(\Illuminate\Routing\Router $router) {
     $router->post('protected', 'AuthenticateController@isProtected');       //  +
-    $router->get('/user/{id}', 'UserController@getUserById');               //  +
+
     $router->get('/users', 'UserController@getAllUsers');                   //  +
 
     $router->delete('/profile', 'UserController@deleteProfile');            //  +
@@ -87,7 +89,7 @@ Route::group([
     $router->get('/followed', 'FollowerController@getMyFollowed');          //  +
     $router->get('/followed/{id}', 'FollowerController@getUserFollowed');   //  +
 
-    $router->get('/shops/my', 'ShopController@getMyShops');                 //  +
+    $router->get('/shops/my/{count?}', 'ShopController@getMyShops');                 //  +
     $router->get('/brands/{search?}', 'BrandController@getBrands');         //  +
     $router->get('/products/category/{categoryIds}/{search?}', 'ProductController@getProductsByCategory');  //  +
     $router->get('/products/brand/{brandIds}/{search?}', 'ProductController@getProductsByBrand');           //  +
@@ -96,8 +98,12 @@ Route::group([
 
     $router->get('/basket', 'BasketController@getBasket');                                  //  +
     $router->post('/basket/{productId}/{count?}', 'BasketController@addProduct');           //  +
-    $router->delete('/basket/{basketId}', 'BasketController@removeProduct');                //  +
+    $router->delete('/basket/{productId}', 'BasketController@removeProduct');                //  +
     $router->patch('/basket/{basketId}/{count}', 'BasketController@changeProductCount');   //  +
 
+    $router->get('/orders', 'OrderController@getMyOrders');         //  +
+    $router->post('/order', 'OrderController@makeOrder');
+
+    $router->get('/discount/{search}', 'OrderController@searchDiscount');
 
 });

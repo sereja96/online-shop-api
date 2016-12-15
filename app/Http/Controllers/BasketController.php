@@ -12,11 +12,17 @@ class BasketController extends Controller
 {
     public function getBasket()
     {
+        $basket = $this->getBasketItems();
+        return Response::success($basket);
+    }
+
+    public function getBasketItems()
+    {
         $basket = Basket::withAll()
             ->my()
             ->get();
 
-        return Response::success($basket);
+        return $basket;
     }
 
     public function addProduct($productId, $count = 1)
@@ -46,9 +52,9 @@ class BasketController extends Controller
         return Response::error('unknown_error');
     }
 
-    public function removeProduct($basketId)
+    public function removeProduct($productId)
     {
-        $basketProduct = Basket::where('id', $basketId)
+        $basketProduct = Basket::where('product_id', $productId)
             ->my()
             ->first();
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Basket;
 use App\Common\CommonScopes;
 use App\Common\EnableTrait;
 use App\Common\ScopesTrait;
@@ -139,6 +138,12 @@ class User extends Authenticatable implements CommonScopes
     {
         return $this->hasMany(Follower::class, 'follower_user_id')
             ->lists($this->getUserIdColumn());
+    }
+
+    public function basketProductsIds()
+    {
+        return $this->hasMany(Basket::class)
+            ->lists('product_id');
     }
 
     // Scopes

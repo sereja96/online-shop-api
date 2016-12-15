@@ -15,7 +15,16 @@ class Order extends Model implements CommonScopes
     protected $hidden = [
         'user_id',
         'discount_id',
-        'pivot'
+        'pivot',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $fillable = [
+        'address',
+        'phone',
+        'user_id',
+        'discount_id'
     ];
 
     public function user()
@@ -30,7 +39,7 @@ class Order extends Model implements CommonScopes
 
     public function products()
     {
-        return $this->belongsToMany(Product::class)->withAll();
+        return $this->hasMany(OrderProduct::class)->withAll();
     }
 
     public function scopeWithAll($query)

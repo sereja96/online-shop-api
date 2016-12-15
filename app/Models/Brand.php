@@ -42,7 +42,7 @@ class Brand extends Model implements CommonScopes
 
     public function image()
     {
-        return $this->belongsTo(Media::class);
+        return $this->belongsTo(Media::class, 'media_id');
     }
 
     public function scopeWithAll($query)

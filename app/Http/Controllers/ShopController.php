@@ -9,11 +9,12 @@ use App\Response;
 
 class ShopController extends Controller
 {
-    public function getMyShops()
+    public function getMyShops($count = null)
     {
         $shops = Shop::with(['image'])
             ->my()
             ->enabled()
+            ->takeCount($count)
             ->get();
 
         return Response::success($shops);
@@ -28,11 +29,12 @@ class ShopController extends Controller
         return Response::success($shops);
     }
 
-    public function getPopularShops($count = 6)
+    public function getPopularShops($count = 6, $search = null)
     {
         $shops = Shop::with(['image', 'productCount'])
             ->enabled()
             ->orderBy('rate', 'DESC')
+            ->search($search)
             ->takeCount($count)
             ->get();
 

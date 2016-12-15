@@ -9,9 +9,10 @@ use App\Http\Requests;
 
 class CategoryController extends Controller
 {
-    public function getPopularCategories($count = 0)
+    public function getPopularCategories($count = 0, $search = null)
     {
         $categories = Category::with('image', 'productCount')
+            ->search($search)
             ->takeCount($count)
             ->get();
 
